@@ -9,7 +9,7 @@ import pysjtu
 running_path = os.getcwd()
 
 # 登录教务系统
-if len(sys.argv) > 4:
+if len(sys.argv) > 2:
     username = sys.argv[1]
     password = sys.argv[2]
     print("jaccount账号：", username)
