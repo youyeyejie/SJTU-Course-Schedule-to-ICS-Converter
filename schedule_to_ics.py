@@ -4,19 +4,28 @@ import os
 import sys
 import pytz
 import pysjtu
+import json
 
 # 获取当前执行脚本的终端路径
-running_path = os.getcwd()
+root_path = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(root_path, "config.json")
 
 # 登录教务系统
 if len(sys.argv) > 2:
     username = sys.argv[1]
     password = sys.argv[2]
-    print("jaccount账号：", username)
-    print("jaccount密码：", password)
+elif os.path.exists(config_path):
+    with open(config_path, "r") as f:
+        config = json.load(f)
+        username = config.get("jaccount")
+        password = config.get("password")
+    if not username or not password:
+        username = input("请输入jaccount账号：")
+        password = input("请输入jaccount密码：")
 else:
     username = input("请输入jaccount账号：")
     password = input("请输入jaccount密码：")
+
 
 print("正在登录教务系统...")
 try:
@@ -52,11 +61,12 @@ if not schedule:
     sys.exit(1)
 else:
     print("成功获取课程安排信息。")
+    print(schedule)
     print("正在生成ICS文件...")
 
 # 生成ICS文件保存路径
 ics_name = f"{year}-{year + 1}-第{term + 1}学期课程安排.ics"
-directory = os.path.join(running_path, "data")
+directory = os.path.join(root_path, "data")
 if not os.path.exists(directory):
     os.makedirs(directory)
 ics_path = os.path.join(directory, ics_name)
